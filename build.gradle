@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.reugn'
+version '0.1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.kafka', name: 'kafka-streams', version: '2.5.0'
+    compile group: 'com.aerospike', name: 'aerospike-client', version: '4.4.10'
+    testCompile group: 'org.apache.kafka', name: 'kafka-streams-test-utils', version: '2.5.0'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
+}
+
+test {
+    useJUnitPlatform()
+}
