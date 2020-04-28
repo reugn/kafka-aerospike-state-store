@@ -1,14 +1,33 @@
 plugins {
     id 'java'
+    id 'maven'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '0.4.1'
 }
 
 group 'com.github.reugn'
-version '0.1.0'
+version '0.2.0'
 
 sourceCompatibility = 1.8
 
 repositories {
+    jcenter()
     mavenCentral()
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("user")
+    key = properties.getProperty("password")
+    configurations = ['archives']
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = 'kafka-aerospike-state-store'
+        licenses = ['Apache-2.0']
+    }
 }
 
 dependencies {
