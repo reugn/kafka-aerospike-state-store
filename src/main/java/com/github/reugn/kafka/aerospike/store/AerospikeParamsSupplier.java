@@ -15,6 +15,8 @@ public class AerospikeParamsSupplier {
                                    final int port,
                                    final String namespace,
                                    final String setName) {
+        if (policy.eventLoops == null)
+            policy.eventLoops = EventLoopProvider.getEventLoops();
         this.policy = policy;
         this.hostname = hostname;
         this.port = port;

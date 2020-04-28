@@ -1,12 +1,11 @@
 package com.github.reugn.kafka.aerospike.store;
 
-import org.apache.kafka.streams.processor.StateStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AerospikeStoreBuilder implements StoreBuilder {
+public class AerospikeStoreBuilder<K, V> implements StoreBuilder<AerospikeStore<K, V>> {
 
     private Map<String, String> logConfig = new HashMap<>();
     private boolean enableLogging = false;
@@ -21,24 +20,24 @@ public class AerospikeStoreBuilder implements StoreBuilder {
     }
 
     @Override
-    public StoreBuilder withCachingEnabled() {
+    public StoreBuilder<AerospikeStore<K, V>> withCachingEnabled() {
         return this;
     }
 
     @Override
-    public StoreBuilder withCachingDisabled() {
+    public StoreBuilder<AerospikeStore<K, V>> withCachingDisabled() {
         return this;
     }
 
     @Override
-    public StoreBuilder withLoggingDisabled() {
+    public StoreBuilder<AerospikeStore<K, V>> withLoggingDisabled() {
         enableLogging = false;
         return this;
     }
 
     @Override
-    public StateStore build() {
-        return new AerospikeStore(params, name);
+    public AerospikeStore<K, V> build() {
+        return new AerospikeStore<>(params, name);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class AerospikeStoreBuilder implements StoreBuilder {
     }
 
     @Override
-    public StoreBuilder withLoggingEnabled(Map config) {
+    public StoreBuilder<AerospikeStore<K, V>> withLoggingEnabled(final Map<String, String> config) {
         enableLogging = true;
         logConfig = config;
         return this;
