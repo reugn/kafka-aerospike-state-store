@@ -193,11 +193,11 @@ public class AerospikeStore<K, V> implements KeyValueStore<K, V> {
     }
 
     private KeyValueIterator<K, V> doScan(ScanPolicy policy) {
-        final AerospikeStoreIterator<K, V> iter = new AerospikeStoreIterator<>();
-        RecordSequenceListener listener = new ScanRecordSequenceListener<>(iter);
+        final RecordSet<K, V> recordSet = new RecordSet<>();
+        RecordSequenceListener listener = new ScanRecordSequenceListener<>(recordSet);
         client.scanAll(EventLoopProvider.getEventLoop(), listener, policy,
                 params.getNamespace(), params.getSetName());
-        return iter;
+        return recordSet.iterator();
     }
 
     @Override

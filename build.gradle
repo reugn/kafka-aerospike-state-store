@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.github.reugn'
-version '0.2.0'
+version '0.3.0'
 
 sourceCompatibility = 1.8
 
@@ -31,10 +31,10 @@ bintray {
 }
 
 dependencies {
-    compile group: 'org.apache.kafka', name: 'kafka-streams', version: '2.5.0'
-    compile group: 'com.aerospike', name: 'aerospike-client', version: '4.4.10'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
-    testCompile group: 'org.apache.kafka', name: 'kafka-streams-test-utils', version: '2.5.0'
+    implementation group: 'org.apache.kafka', name: 'kafka-streams', version: '2.5.0'
+    implementation group: 'com.aerospike', name: 'aerospike-client', version: '4.4.10'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    testImplementation group: 'org.apache.kafka', name: 'kafka-streams-test-utils', version: '2.5.0'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
 }
