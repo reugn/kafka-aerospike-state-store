@@ -8,10 +8,10 @@ import org.apache.kafka.streams.KeyValue;
 
 public class ScanRecordSequenceListener<K, V> implements RecordSequenceListener {
 
-    private AerospikeStoreIterator<K, V> iterator;
+    private RecordSet<K, V> recordSet;
 
-    ScanRecordSequenceListener(AerospikeStoreIterator<K, V> iterator) {
-        this.iterator = iterator;
+    ScanRecordSequenceListener(RecordSet<K, V> recordSet) {
+        this.recordSet = recordSet;
     }
 
     @SuppressWarnings("unchecked")
@@ -19,16 +19,16 @@ public class ScanRecordSequenceListener<K, V> implements RecordSequenceListener 
     public void onRecord(Key key, Record record) throws AerospikeException {
         K k = (K) record.bins.get(AerospikeStore.genericKeyBinName);
         V v = (V) record.bins.get(AerospikeStore.genericValueBinName);
-        iterator.put(new KeyValue<>(k, v));
+        recordSet.put(new KeyValue<>(k, v));
     }
 
     @Override
     public void onSuccess() {
-        iterator.close();
+        recordSet.put(recordSet.END);
     }
 
     @Override
     public void onFailure(AerospikeException exception) {
-        iterator.fail();
+        recordSet.close();
     }
 }
