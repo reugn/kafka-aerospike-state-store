@@ -8,7 +8,7 @@ import org.apache.kafka.streams.KeyValue;
 
 public class ScanRecordSequenceListener<K, V> implements RecordSequenceListener {
 
-    private RecordSet<K, V> recordSet;
+    private final RecordSet<K, V> recordSet;
 
     ScanRecordSequenceListener(RecordSet<K, V> recordSet) {
         this.recordSet = recordSet;

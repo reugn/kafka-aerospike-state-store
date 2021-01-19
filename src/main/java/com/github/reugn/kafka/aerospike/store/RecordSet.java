@@ -13,7 +13,7 @@ public class RecordSet<K, V> implements KeyValueIterable<K, V>, Closeable {
 
     public final KeyValue<K, V> END = new KeyValue<>(null, null);
 
-    private BlockingQueue<KeyValue<K, V>> queue = new LinkedBlockingQueue<>(defaultCapacity);
+    private final BlockingQueue<KeyValue<K, V>> queue = new LinkedBlockingQueue<>(defaultCapacity);
     private KeyValue<K, V> record;
     private boolean valid = true;
 
@@ -70,7 +70,7 @@ public class RecordSet<K, V> implements KeyValueIterable<K, V>, Closeable {
     }
 
     /**
-     * Abort retrieval with end token.
+     * Abort retrieval with the end token.
      */
     protected void abort() {
         valid = false;

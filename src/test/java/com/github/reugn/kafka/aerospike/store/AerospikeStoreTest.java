@@ -20,16 +20,16 @@ public class AerospikeStoreTest {
     private KeyValueStore<Long, Long> store;
     static final String storeName = "test-store";
 
-    private final String INPUT_TOPIC = "in";
-    private final String OUTPUT_TOPIC = "out";
+    private static final String INPUT_TOPIC = "in";
+    private static final String OUTPUT_TOPIC = "out";
 
-    private StringDeserializer stringDeserializer = new StringDeserializer();
-    private LongDeserializer longDeserializer = new LongDeserializer();
-    private IntegerDeserializer intDeserializer = new IntegerDeserializer();
+    private final StringDeserializer stringDeserializer = new StringDeserializer();
+    private final LongDeserializer longDeserializer = new LongDeserializer();
+    private final IntegerDeserializer intDeserializer = new IntegerDeserializer();
 
-    private StringSerializer stringSerializer = new StringSerializer();
-    private LongSerializer longSerializer = new LongSerializer();
-    private IntegerSerializer intSerializer = new IntegerSerializer();
+    private final StringSerializer stringSerializer = new StringSerializer();
+    private final LongSerializer longSerializer = new LongSerializer();
+    private final IntegerSerializer intSerializer = new IntegerSerializer();
 
     private TestInputTopic<Long, Long> recordFactory;
     private TestOutputTopic<Long, Long> recordSink;
@@ -150,11 +150,10 @@ public class AerospikeStoreTest {
         private ProcessorContext context;
         private KeyValueStore<Long, Long> store;
 
-        @SuppressWarnings("unchecked")
         @Override
         public void init(ProcessorContext context) {
             this.context = context;
-            store = (KeyValueStore<Long, Long>) context.getStateStore(storeName);
+            store = context.getStateStore(storeName);
         }
 
         @Override
