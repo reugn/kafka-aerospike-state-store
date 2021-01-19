@@ -3,7 +3,10 @@ package com.github.reugn.kafka.aerospike.store;
 import com.aerospike.client.async.EventLoop;
 import com.aerospike.client.async.EventLoops;
 import com.aerospike.client.async.EventPolicy;
-import com.aerospike.client.async.NioEventLoops;
+import com.aerospike.client.async.NettyEventLoops;
+import io.netty.channel.nio.NioEventLoopGroup;
+
+import static java.util.Objects.requireNonNull;
 
 public final class EventLoopProvider {
 
@@ -13,16 +16,19 @@ public final class EventLoopProvider {
     private static EventLoops eventLoops;
 
     public static EventLoop getEventLoop() {
-        if (null == eventLoops) {
-            eventLoops = new NioEventLoops(new EventPolicy(), 1);
-        }
-        return eventLoops.get(0);
+        initEventLoops();
+        return eventLoops.next();
     }
 
     public static EventLoops getEventLoops() {
-        if (null == eventLoops) {
-            eventLoops = new NioEventLoops(new EventPolicy(), 1);
-        }
+        initEventLoops();
         return eventLoops;
+    }
+
+    private static void initEventLoops() {
+        if (null == eventLoops) {
+            eventLoops = new NettyEventLoops(new EventPolicy(), new NioEventLoopGroup(2));
+            requireNonNull(eventLoops.get(0));
+        }
     }
 }
