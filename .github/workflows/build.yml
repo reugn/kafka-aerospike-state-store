@@ -23,6 +23,9 @@ jobs:
       - name: Set up Aerospike Database
         uses: reugn/github-action-aerospike@v1
 
+      - name: Create local.properties
+        run: echo -e 'user = u\npassword = p' > local.properties
+
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:
