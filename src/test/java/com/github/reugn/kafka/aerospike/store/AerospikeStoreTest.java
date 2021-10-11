@@ -1,10 +1,22 @@
 package com.github.reugn.kafka.aerospike.store;
 
-import org.apache.kafka.common.serialization.*;
-import org.apache.kafka.streams.*;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
+import org.apache.kafka.common.serialization.IntegerDeserializer;
+import org.apache.kafka.common.serialization.IntegerSerializer;
+import org.apache.kafka.common.serialization.LongDeserializer;
+import org.apache.kafka.common.serialization.LongSerializer;
+import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.TestInputTopic;
+import org.apache.kafka.streams.TestOutputTopic;
+import org.apache.kafka.streams.Topology;
+import org.apache.kafka.streams.TopologyTestDriver;
+import org.apache.kafka.streams.processor.api.Processor;
+import org.apache.kafka.streams.processor.api.ProcessorContext;
+import org.apache.kafka.streams.processor.api.ProcessorSupplier;
+import org.apache.kafka.streams.processor.api.Record;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.junit.jupiter.api.AfterEach;
@@ -12,7 +24,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Properties;
 
 public class AerospikeStoreTest {
 
@@ -139,30 +155,30 @@ public class AerospikeStoreTest {
         Assertions.assertEquals(actual, expected);
     }
 
-    static class StoreProcessorSupplier implements ProcessorSupplier<Long, Long> {
+    static class StoreProcessorSupplier implements ProcessorSupplier<Long, Long, Long, Long> {
         @Override
-        public Processor<Long, Long> get() {
+        public Processor<Long, Long, Long, Long> get() {
             return new StoreProcessor();
         }
     }
 
-    static class StoreProcessor implements Processor<Long, Long> {
-        private ProcessorContext context;
+    static class StoreProcessor implements Processor<Long, Long, Long, Long> {
+        private ProcessorContext<Long, Long> context;
         private KeyValueStore<Long, Long> store;
 
         @Override
-        public void init(ProcessorContext context) {
+        public void init(ProcessorContext<Long, Long> context) {
             this.context = context;
             store = context.getStateStore(storeName);
         }
 
         @Override
-        public void process(Long key, Long value) {
-            store.put(key, value);
-            if (value == 0) {
-                store.delete(key);
+        public void process(Record<Long, Long> record) {
+            store.put(record.key(), record.value());
+            if (record.value() == 0) {
+                store.delete(record.key());
             }
-            context.forward(key, value);
+            context.forward(record);
         }
 
         @Override
