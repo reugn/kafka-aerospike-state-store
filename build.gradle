@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.reugn'
-version '0.3.0'
+version '0.4.0'
 
 sourceCompatibility = 1.8
 
@@ -21,8 +21,8 @@ publishing {
             name = "GithubPackages"
             url = uri("https://maven.pkg.github.com/reugn/kafka-aerospike-state-store")
             credentials {
-                username = properties.getProperty("user") ?: System.getenv("USERNAME")
-                password = properties.getProperty("password") ?: System.getenv("TOKEN")
+                username = properties.getProperty("user") ?: System.getenv("GITHUB_ACTOR")
+                password = properties.getProperty("password") ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }
@@ -33,14 +33,19 @@ publishing {
     }
 }
 
+ext {
+    kafkaVersion = '2.8.1'
+    junitVersion = '5.8.1'
+}
+
 dependencies {
-    implementation group: 'org.apache.kafka', name: 'kafka-streams', version: '2.7.0'
-    implementation group: 'com.aerospike', name: 'aerospike-client', version: '5.0.2'
-    implementation group: 'io.netty', name: 'netty-all', version: '4.1.58.Final'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
-    testImplementation group: 'org.apache.kafka', name: 'kafka-streams-test-utils', version: '2.7.0'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
-    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
+    implementation "org.apache.kafka:kafka-streams:$kafkaVersion"
+    implementation "com.aerospike:aerospike-client:5.1.8"
+    implementation "io.netty:netty-all:4.1.68.Final"
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+    testImplementation "org.apache.kafka:kafka-streams-test-utils:$kafkaVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
 test {
