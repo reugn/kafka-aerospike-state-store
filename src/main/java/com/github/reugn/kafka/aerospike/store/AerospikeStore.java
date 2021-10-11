@@ -6,6 +6,8 @@ import com.aerospike.client.Bin;
 import com.aerospike.client.Key;
 import com.aerospike.client.Record;
 import com.aerospike.client.Value;
+import com.aerospike.client.exp.Exp;
+import com.aerospike.client.exp.Expression;
 import com.aerospike.client.listener.RecordSequenceListener;
 import com.aerospike.client.policy.Policy;
 import com.aerospike.client.policy.RecordExistsAction;
@@ -171,10 +173,13 @@ public class AerospikeStore<K, V> implements KeyValueStore<K, V> {
         Objects.requireNonNull(to, "to parameter is null");
         validateStoreOpen();
         ScanPolicy policy = new ScanPolicy();
-        policy.predExp = buildPredExp(from, to);
+        // As of Aerospike Database 5.2, Predicate Expressions (PredExps) are obsolete.
+        // policy.predExp = buildPredExp(from, to);
+        policy.filterExp = buildFilterExpression(from, to);
         return doScan(policy);
     }
 
+    @SuppressWarnings({"deprecation", "unused"})
     private PredExp[] buildPredExp(K from, K to) {
         List<PredExp> list = new ArrayList<>(7);
         if (from instanceof Number) {
@@ -189,6 +194,19 @@ public class AerospikeStore<K, V> implements KeyValueStore<K, V> {
             throw new UnsupportedOperationException("supported for numeric keys only");
         }
         return list.toArray(new PredExp[7]);
+    }
+
+    private Expression buildFilterExpression(K from, K to) {
+        if (from instanceof Number) {
+            return Exp.build(
+                    Exp.and(
+                            Exp.ge(Exp.bin(genericKeyBinName, Exp.Type.INT), Exp.val(((Number) from).longValue())),
+                            Exp.le(Exp.bin(genericKeyBinName, Exp.Type.INT), Exp.val(((Number) to).longValue()))
+                    )
+            );
+        } else {
+            throw new UnsupportedOperationException("supported for numeric keys only");
+        }
     }
 
     @Override
